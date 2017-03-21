@@ -4,29 +4,41 @@
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
-;; this is the cool bit--change themes on time of days
-;; other main locale: Andover, MA, 42.65 N, -71.13 E
-;; Charlotte NC is 35.22 N, -80.84 E
-(setq calendar-current-location-name "Andover MA")
-(setq calendar-longitude -71.13)
-(setq calendar-latitude 42.65)
-(require 'theme-changer)
-(change-theme 'base16-tomorrow 'base16-tomorrow-night)
+;; this is now managed by a Python shell commandd
+;; on startup, read in a file for what to do
+;; it will change automatically
+
+;; ;; this is the cool bit--change themes on time of days
+;; ;; other main locale: Andover, MA, 42.65 N, -71.13 E
+;; ;; Charlotte NC is 35.22 N, -80.84 E
+;; (setq calendar-current-location-name "Andover MA")
+;; (setq calendar-longitude -71.13)
+;; (setq calendar-latitude 42.65)
+;; (require 'theme-changer)
+;; (change-theme 'material-light 'material)
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(load-theme (intern (substring (get-string-from-file "/home/nicholasm/.emacs.d/curr_theme") 0 -1)))
 
 ;; font
-(set-face-attribute 'default nil :font "Ubuntu Mono derivative Powerline 15")
-(setq line-spacing 0)
+(set-face-attribute 'default nil :font "DejaVu Sans Mono 14")
+(setq line-spacing .15)
 
-(use-package spaceline
-  :init
+(use-package spaceline-config
+  :config
   (spaceline-spacemacs-theme)
   (spaceline-helm-mode)
   (setq powerline-active1 "#923232")
   (setq powerline-active2 "#38535b")
   (setq mode-line "#394939")
-
   )
 
+(highlight-indentation-mode 0)
 
 ;; pretty symbols in LaTeX
 (defvar pretty-alist
@@ -80,6 +92,8 @@
 
 (my-global-rainbow-mode 1)
 
+(smooth-scrolling-mode)
+
 ;; prompts
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -102,31 +116,13 @@
   :init
   (global-pretty-mode t))
 
-(use-package focus
-  :init
-  (add-hook 'prog-mode-hook 'focus-mode)
-  :bind ("C-c c f" . focus-mode)
-  )
+;; (use-package focus
+;;   :init
+;;   (add-hook 'prog-mode-hook 'focus-mode)
+;;   :bind ("C-c c f" . focus-mode)
+;;   )
 
 (add-hook 'prog-mode-hook 'linum-mode)
 
 ;; rainbow-delimiters config
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(rainbow-delimiters-depth-1-face ((t (:background "#00ccff" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-2-face ((t (:background "#9400d3" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-3-face ((t (:background "#Ff1493" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-4-face ((t (:background "#Ff0000" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-5-face ((t (:background "#Ff4500" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-6-face ((t (:background "#Ffd700" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-7-face ((t (:background "#7cfc00" :foreground "#34342a"))))
- '(rainbow-delimiters-depth-8-face ((t (:background "#44ff77" :foreground "#34342a"))))
- '(rainbow-delimiters-unmatched-face ((t (:background "#ffff00" :foreground "#000000"))))
- '(mode-line ((t (:foreground "#ababcb" :background "#4d4d4d" :box nil))))
- '(mode-line-inactive ((t (:foreground "#5e5e5e" :background "#2d2d2d" :box nil))))
- )
-
